@@ -1,5 +1,6 @@
+import { Tooltip } from "antd";
 import React from "react";
-import { useAccount, useConnect, useEnsName } from "wagmi";
+import { useAccount, useConnect, useDisconnect, useEnsName } from "wagmi";
 import { InjectedConnector } from "wagmi/connectors/injected";
 
 const Connect: React.FC = () => {
@@ -8,6 +9,7 @@ const Connect: React.FC = () => {
   const { connect } = useConnect({
     connector: new InjectedConnector(),
   });
+  const { disconnect } = useDisconnect();
 
   const shortenAddress = (address: string | undefined | null) => {
     const maxLength = 10;
@@ -21,8 +23,10 @@ const Connect: React.FC = () => {
 
   if (isConnected)
     return (
-      <div className="button-main">
-        {shortenAddress(ensName) ?? shortenAddress(address)}
+      <div className="button-main cursor-pointer" onClick={() => disconnect()}>
+        <Tooltip title="Disconnect">
+          <span> {shortenAddress(ensName) ?? shortenAddress(address)}</span>
+        </Tooltip>
       </div>
     );
   return (

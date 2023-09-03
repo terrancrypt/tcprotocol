@@ -11,6 +11,13 @@
     transition: all 0.3s;
 }
 
-.button-main:hover {
+.button-secondary {
+    border-radius: 8px;
+    padding: 8px;
+    transition: all;
+}
+
+.button-main:hover,
+.button-secondary:hover {
     scale: 90%;
 }
