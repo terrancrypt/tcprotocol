@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Button */
+.button-main {
+    background-color: #0f1841;
+    color: white;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.3s;
+}
+
+.button-main:hover {
+    scale: 90%;
+}

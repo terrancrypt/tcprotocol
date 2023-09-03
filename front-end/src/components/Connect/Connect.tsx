@@ -9,8 +9,27 @@ const Connect: React.FC = () => {
     connector: new InjectedConnector(),
   });
 
-  if (isConnected) return <div>Connected to {ensName ?? address}</div>;
-  return <button onClick={() => connect()}>Connect Wallet</button>;
+  const shortenAddress = (address: string | undefined | null) => {
+    const maxLength = 10;
+    if (address != undefined) {
+      const start = address.substring(0, maxLength / 2);
+      const end = address.substring(address.length - maxLength / 2);
+      address = `${start}...${end}`;
+      return address;
+    }
+  };
+
+  if (isConnected)
+    return (
+      <div className="button-main">
+        {shortenAddress(ensName) ?? shortenAddress(address)}
+      </div>
+    );
+  return (
+    <button className="button-main" onClick={() => connect()}>
+      Connect Wallet
+    </button>
+  );
 };
 
 export default Connect;
