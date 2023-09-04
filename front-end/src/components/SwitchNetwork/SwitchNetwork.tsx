@@ -1,17 +1,15 @@
 import { Listbox, Transition } from "@headlessui/react";
-import { GlobeAltIcon } from "@heroicons/react/20/solid";
 import { Fragment } from "react";
 import React from "react";
 import { sepolia, useNetwork, useSwitchNetwork } from "wagmi";
-import { arbitrumGoerli, optimismGoerli, polygonMumbai } from "wagmi/chains";
+import { optimismGoerli, polygonMumbai } from "wagmi/chains";
 import { Tooltip } from "antd";
 
 const SwitchNetwork: React.FC = () => {
   const { chain } = useNetwork();
-  const { error, isLoading, pendingChainId, switchNetwork } =
-    useSwitchNetwork();
+  const { switchNetwork } = useSwitchNetwork();
 
-  const chains = [sepolia, arbitrumGoerli, optimismGoerli, polygonMumbai];
+  const chains = [sepolia, optimismGoerli, polygonMumbai];
 
   return (
     <>
