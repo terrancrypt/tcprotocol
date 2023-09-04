@@ -6,13 +6,13 @@ import { NavLink } from "react-router-dom";
 const Header: React.FC = () => {
   return (
     <header className="fixed top-0 left-0 right-0">
-      <div className="h-[60px] container mx-auto px-6 sm:px-8 2xl:px-0 border-b">
-        <div className="flex h-full justify-between items-center">
+      <div className="h-[60px] container mx-auto px-6 sm:px-8 2xl:px-0">
+        <div className="flex h-full justify-between items-center text-white">
           <NavLink className="h-full" to="/">
-            <img src="imgs/tcp-logo-bgtrans.png" alt="" className="h-full" />
+            <img src="imgs/tcp-logo-bgtrans-white.png" alt="" className="h-full" />
           </NavLink>
 
-          <nav className="space-x-6">
+          <nav className="space-x-6 text-gray-200">
             <NavLink to="/dashboard" className="hover:underline transition-all">
               Dashboard
             </NavLink>
