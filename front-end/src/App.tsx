@@ -13,6 +13,8 @@ import { RootState } from "./redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { message } from "antd";
 import { addCollateralList } from "./redux/slices/collateralSlice";
+import FaucetPage from "./pages/FaucetPage/FaucetPage";
+import DashboardPage from "./pages/Dashboard/DashboardPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -34,12 +36,14 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="container mx-auto px-6 sm:px-8 2xl:px-0">
+      <div className="min-h-screen bg-gradient-to-bl from-sky-900 to-blue-100">
         <Header />
         <div className="pt-[80px]">
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/borrow" element={<BorrowPage />} />
+            <Route path="/faucet" element={<FaucetPage />} />
           </Routes>
         </div>
       </div>

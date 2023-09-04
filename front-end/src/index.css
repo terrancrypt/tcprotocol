@@ -21,3 +21,15 @@
 .button-secondary:hover {
     scale: 90%;
 }
+
+.glassmorphism {
+  background-color: #292b2c;
+  border-radius: 10px;
+  box-shadow: 0 7px 14px 0 rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  opacity: 0.9;
+}
+
+.glassmorphism .text {
+  color: #ffffff;
+}
