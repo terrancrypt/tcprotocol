@@ -1,35 +1,54 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import HomePage from "./pages/HomePage/HomePage";
+import BorrowPage from "./pages/BorrowPage/BorrowPage";
+import Header from "./components/Header/Header";
+import { useEffect } from "react";
+import {
+  CollateralInfo,
+  getAllCollateralList,
+} from "./services/collateralRenderServices";
+import { sepolia } from "wagmi";
+import { optimismGoerli, polygonMumbai } from "wagmi/chains";
+import { RootState } from "./redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { message } from "antd";
+import { addCollateralList } from "./redux/slices/collateralSlice";
+import FaucetPage from "./pages/FaucetPage/FaucetPage";
+import DashboardPage from "./pages/Dashboard/DashboardPage";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const dispatch = useDispatch();
+
+  const fetchCollateralList = async () => {
+    try {
+      const chains = [sepolia, optimismGoerli, polygonMumbai];
+      const result: CollateralInfo | null = await getAllCollateralList(chains);
+      if (result == null) return null;
+      dispatch(addCollateralList(result));
+    } catch (error) {
+      message.error("Can't not fetch collateral list!");
+    }
+  };
+
+  useEffect(() => {
+    fetchCollateralList();
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <BrowserRouter>
+      <div className="min-h-screen bg-gradient-to-bl from-sky-900 to-blue-100">
+        <Header />
+        <div className="pt-[80px]">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/borrow" element={<BorrowPage />} />
+            <Route path="/faucet" element={<FaucetPage />} />
+          </Routes>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
