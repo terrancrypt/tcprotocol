@@ -1,5 +1,6 @@
 import {
   getCurrentVaultId,
+  getTotalValueInUSD,
   getVaultAddress,
   getVaultBalance,
 } from "./contracts/interactEngineContract";
@@ -8,9 +9,11 @@ import { getTokenSymbol } from "./contracts/interactTokenContract";
 export interface CollateralInfo {
   [chainName: string]: {
     vaults: {
+      chainId: number;
       vaultSymbol: string;
       vaultId: number;
       balance: string;
+      valueInUSD: string;
     }[];
   };
 }
@@ -28,15 +31,18 @@ export const getAllCollateralList = async (
 
       if (currentVaultId !== null && currentVaultId !== 0) {
         for (let i = 0; i < currentVaultId; i++) {
-          const result = await getVaultBalance(chain.id, i);
+          const balance = await getVaultBalance(chain.id, i);
           const address = await getVaultAddress(chain.id, i);
           const symbol = await getTokenSymbol(chain.id, address as string);
 
-          if (result && symbol) {
+          if (balance && symbol && address) {
+            const value = await getTotalValueInUSD(chain.id, balance, address);
             const objectResult = {
+              chainId: chain.id,
               vaultSymbol: symbol,
               vaultId: i,
-              balance: result,
+              balance: balance,
+              valueInUSD: parseFloat(value).toLocaleString(),
             };
             collateralInfo[chain.name].vaults.push(objectResult);
           }

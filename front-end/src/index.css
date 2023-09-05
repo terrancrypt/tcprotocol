@@ -37,6 +37,40 @@
   color: white !important
 }
 
+/* Antd Steps */
+.ant-steps .ant-steps-item-title {
+  color: white !important;
+}
+
+.ant-steps .ant-steps-item-process .ant-steps-item-icon {
+  background-color: #0f1841 !important;
+  border: #0f1841;
+}
+
+.ant-steps .ant-steps-item-wait .ant-steps-item-icon {
+  background-color: gray !important;
+}
+
+.ant-steps .ant-steps-item-wait .ant-steps-item-icon .ant-steps-icon {
+  color: white !important;
+}
+
+.ant-steps .ant-steps-item-process .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title::after {
+  background-color: white !important;
+}
+
+.ant-steps .ant-steps-item-wait .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title::after {
+  background-color: gray !important;
+}
+
+.ant-steps .ant-steps-item-finish .ant-steps-item-icon .ant-steps-icon {
+  color: #0f1841 !important;
+}
+
+.ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title::after {
+  background-color: #0f1841 !important;
+}
+
 
 .glassmorphism {
   background-color: #292b2c;
