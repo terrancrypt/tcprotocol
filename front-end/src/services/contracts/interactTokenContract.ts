@@ -1,5 +1,7 @@
 import { readContract } from "@wagmi/core";
 import MockTokenABI from "../abis/MockTokenABI.json";
+import { writeContract, fetchBalance } from "@wagmi/core";
+import { formatEther } from "ethers";
 
 // read
 async function getTokenSymbol(
@@ -19,5 +21,42 @@ async function getTokenSymbol(
   }
 }
 
+async function fetchTokenBalance(
+  chainId: number,
+  tokenAddress: string,
+  userAddress: string
+): Promise<any | null> {
+  try {
+    const result = await fetchBalance({
+      address: userAddress as any,
+      token: tokenAddress as any,
+      chainId,
+      formatUnits: "ether",
+    });
+    return formatEther(result.value);
+  } catch (error) {
+    return null;
+  }
+}
+
 // write
-export { getTokenSymbol };
+async function writeFaucet(
+  chainId: number,
+  address: string,
+  userAccount: string
+): Promise<string | null> {
+  try {
+    const { hash } = await writeContract({
+      address: address as any,
+      abi: MockTokenABI,
+      chainId,
+      functionName: "faucet",
+      account: userAccount as any,
+    });
+    return hash;
+  } catch (error) {
+    return null;
+  }
+}
+
+export { getTokenSymbol, writeFaucet, fetchTokenBalance };
