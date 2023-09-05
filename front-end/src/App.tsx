@@ -9,12 +9,12 @@ import {
 } from "./services/collateralRenderServices";
 import { sepolia } from "wagmi";
 import { optimismGoerli, polygonMumbai } from "wagmi/chains";
-import { RootState } from "./redux/store";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { message } from "antd";
 import { addCollateralList } from "./redux/slices/collateralSlice";
 import FaucetPage from "./pages/FaucetPage/FaucetPage";
 import DashboardPage from "./pages/Dashboard/DashboardPage";
+import BorowPageDetail from "./pages/BorrowPage/BorowPageDetail";
 
 function App() {
   const dispatch = useDispatch();
@@ -43,6 +43,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/borrow" element={<BorrowPage />} />
+            <Route path="/borrow/:vaultId" element={<BorowPageDetail />} />
             <Route path="/faucet" element={<FaucetPage />} />
           </Routes>
         </div>
