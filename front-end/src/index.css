@@ -4,23 +4,39 @@
 
 /* Button */
 .button-main {
-    background-color: #0f1841;
-    color: white;
-    padding: 8px;
-    border-radius: 6px;
-    transition: all 0.3s;
+  background-color: #0f1841;
+  color: white;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.3s;
 }
 
 .button-secondary {
-    border-radius: 8px;
-    padding: 8px;
-    transition: all;
+  border-radius: 8px;
+  padding: 8px;
+  transition: all;
 }
 
 .button-main:hover,
 .button-secondary:hover {
-    scale: 90%;
+  scale: 90%;
 }
+
+/* Antd Spin */
+.ant-spin .ant-spin-dot-item {
+  background-color: white !important;
+}
+
+.ant-spin-nested-loading .ant-spin .ant-spin-text {
+  color: white !important;
+  text-shadow: none !important;
+}
+
+/* Antd Form */
+.ant-form-vertical .ant-form-item-label>label {
+  color: white !important
+}
+
 
 .glassmorphism {
   background-color: #292b2c;

@@ -38,7 +38,7 @@ function App() {
     <BrowserRouter>
       <div className="min-h-screen bg-gradient-to-bl from-sky-900 to-blue-100">
         <Header />
-        <div className="pt-[80px]">
+        <div className="pt-[80px] container mx-auto px-6 sm:px-8 2xl:px-0">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/dashboard" element={<DashboardPage />} />

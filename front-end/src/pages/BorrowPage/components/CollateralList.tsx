@@ -1,5 +1,5 @@
 import { Tab } from "@headlessui/react";
-import React, { useState, memo } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { sepolia } from "wagmi";
 import { optimismGoerli, polygonMumbai } from "wagmi/chains";
@@ -11,16 +11,19 @@ function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
-const CollateralList: React.FC = memo(function CollateralList() {
+const CollateralList: React.FC = () => {
   const chains = [sepolia, optimismGoerli, polygonMumbai];
   const collateralList = useSelector(
     (state: RootState) => state.collateralSlice
   );
-  console.log(collateralList);
 
   const renderList = () => {
     if (Object.keys(collateralList).length === 0) {
-      return <Spin size="large" />;
+      return (
+        <div className="flex justify-center pt-4">
+          <Spin size="large" />
+        </div>
+      );
     }
     return (
       <Tab.Group>
@@ -94,12 +97,7 @@ const CollateralList: React.FC = memo(function CollateralList() {
     );
   };
 
-  return (
-    <>
-      <h2>Borrow</h2>
-      <div>{renderList()}</div>
-    </>
-  );
-});
+  return <>{renderList()}</>;
+};
 
 export default CollateralList;
