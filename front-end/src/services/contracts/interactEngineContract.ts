@@ -78,6 +78,26 @@ async function getTotalValueInUSD(
   }
 }
 
+async function getUserBalanceInVault(
+  chainId: number,
+  vaultId: number,
+  userAddress: string
+): Promise<string | null> {
+  const address = engineContract[chainId].address;
+  try {
+    const result: any = await readContract({
+      address: address as any,
+      abi: EngineABI as typeof EngineABI,
+      functionName: "getCollateralDeposited",
+      args: [vaultId],
+      account: userAddress as any,
+    });
+    return formatEther(result);
+  } catch (error) {
+    return null;
+  }
+}
+
 // write
 async function depositCollateral(
   chainId: number,
@@ -99,10 +119,41 @@ async function depositCollateral(
   }
 }
 
+async function createPosition(
+  chainId: number,
+  vaultId: number,
+  userAddress: string,
+  amountCollateral: number,
+  amountTcUSD: number
+) {
+  const address = engineContract[chainId].address;
+  try {
+    const { hash } = await writeContract({
+      address: address as any,
+      abi: EngineABI,
+      functionName: "createPosition",
+      args: [
+        vaultId,
+        parseEther(String(amountCollateral)),
+        parseEther(String(amountTcUSD)),
+      ],
+      account: userAddress as any,
+    });
+    return hash;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+async function cancelPosition() {}
+
 export {
   getCurrentVaultId,
   getVaultAddress,
   getVaultBalance,
   getTotalValueInUSD,
   depositCollateral,
+  getUserBalanceInVault,
+  createPosition,
 };

@@ -82,7 +82,7 @@ const Step1: React.FC<StepProps> = ({ current, setCurrent }) => {
 
   const calculate = (e: any) => {
     const amount = e.target.value;
-    const receive = amount * exchangeRate;
+    const receive = (((amount * exchangeRate) / 2) * 45) / 100;
     setReceive(receive);
   };
 
@@ -114,6 +114,7 @@ const Step1: React.FC<StepProps> = ({ current, setCurrent }) => {
         });
         if (wait) {
           message.success("Approve success!");
+          // Deposit
           const result = await depositCollateral(
             vaultInformation.chainId,
             Number(vaultId),
