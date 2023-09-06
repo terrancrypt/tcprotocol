@@ -1,4 +1,4 @@
-import { readContract } from "@wagmi/core";
+import { readContract, writeContract } from "@wagmi/core";
 import { engineContract } from "./contractList";
 import EngineABI from "../abis/EngineABI.json";
 import { formatEther, parseEther } from "ethers";
@@ -79,10 +79,30 @@ async function getTotalValueInUSD(
 }
 
 // write
+async function depositCollateral(
+  chainId: number,
+  vaultId: number,
+  amount: number
+) {
+  const address = engineContract[chainId].address;
+  try {
+    const { hash } = await writeContract({
+      address: address as any,
+      chainId,
+      abi: EngineABI,
+      functionName: "depositCollateral",
+      args: [vaultId, parseEther(String(amount))],
+    });
+    return hash;
+  } catch (error) {
+    return null;
+  }
+}
 
 export {
   getCurrentVaultId,
   getVaultAddress,
   getVaultBalance,
   getTotalValueInUSD,
+  depositCollateral,
 };
