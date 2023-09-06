@@ -11,10 +11,10 @@ const BorrowDetailPage: React.FC = () => {
     (state: RootState) => state.collateralSlice
   );
   const { chain } = useNetwork();
-  const { vaultId } = useParams();
+  const { vaultId, chainName } = useParams();
   let vaultInformation;
-  if (Object.keys(collateralList).length != 0 && chain) {
-    vaultInformation = collateralList[chain.name].vaults[Number(vaultId)];
+  if (Object.keys(collateralList).length != 0 && chainName) {
+    vaultInformation = collateralList[chainName].vaults[Number(vaultId)];
   }
 
   return (
@@ -31,6 +31,7 @@ const BorrowDetailPage: React.FC = () => {
                 <h1 className="text-2xl font-bold">
                   {vaultInformation?.vaultSymbol} Vault
                 </h1>
+                <p>Network: {chainName}</p>
                 <p>
                   Total Deposited:{" "}
                   {parseFloat(vaultInformation?.balance as string).toFixed(2)}
@@ -38,7 +39,11 @@ const BorrowDetailPage: React.FC = () => {
                 <p>Total Value: ${vaultInformation?.valueInUSD}</p>
               </div>
               <div className="flex-1 p-4 bg-white text-black rounded-lg shadow-md">
-                <BorrowStep />
+                {chain.name == chainName ? (
+                  <BorrowStep />
+                ) : (
+                  <p>You need to change the network.</p>
+                )}
               </div>
             </div>
           )}

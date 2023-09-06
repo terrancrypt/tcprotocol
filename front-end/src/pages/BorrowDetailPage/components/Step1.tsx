@@ -1,4 +1,4 @@
-import { Form, Input, Space, Button, FormInstance } from "antd";
+import { Form, Input, Space, Button, FormInstance, message } from "antd";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
@@ -6,6 +6,8 @@ import { useAccount, useNetwork } from "wagmi";
 import { useParams } from "react-router-dom";
 import { fetchTokenBalance } from "../../../services/contracts/interactTokenContract";
 import { getVaultAddress } from "../../../services/contracts/interactEngineContract";
+import { chainLinkPriceFeed } from "../../../services/contracts/contractList";
+import { getLatestAnswer } from "../../../services/contracts/interactPriceFeedContract";
 
 export interface StepProps {
   current: number;
@@ -13,28 +15,19 @@ export interface StepProps {
 }
 
 const Step1: React.FC<StepProps> = ({ current, setCurrent }) => {
-  const [form] = Form.useForm();
-
+  const [exchangeRate, setExchangeRate] = useState<number>(0);
   const collateralList = useSelector(
     (state: RootState) => state.collateralSlice
   );
   const { chain } = useNetwork();
-  const { vaultId } = useParams();
+  const { vaultId, chainName } = useParams();
   const { address } = useAccount();
   const [userBalance, setUserBalance] = useState<number>(0);
+  const [receive, setReceive] = useState<number>(0);
 
-  let vaultInformation;
-  let tyGia;
-  if (Object.keys(collateralList).length != 0 && chain) {
-    vaultInformation = collateralList[chain.name].vaults[Number(vaultId)];
-    console.log("Vault Balance: ", parseInt(vaultInformation.balance));
-    console.log(
-      "Vault Value: ",
-      parseFloat(vaultInformation?.valueInUSD.replace(/,/g, ""))
-    );
-    tyGia =
-      parseFloat(vaultInformation?.valueInUSD.replace(/,/g, "")) /
-      parseInt(vaultInformation.balance);
+  let vaultInformation: any;
+  if (vaultId && chainName) {
+    vaultInformation = collateralList[chainName].vaults[Number(vaultId)];
   }
 
   const getUserInfor = async () => {
@@ -49,102 +42,71 @@ const Step1: React.FC<StepProps> = ({ current, setCurrent }) => {
           vaultAddress as string,
           address as any
         );
+        let exchangeRate;
+        if (vaultInformation.vaultSymbol == "WETH") {
+          exchangeRate = await getLatestAnswer(chainLinkPriceFeed.ETHUSD);
+        } else {
+          exchangeRate = await getLatestAnswer(chainLinkPriceFeed.BTCUSD);
+        }
+        setExchangeRate(parseFloat(exchangeRate as string));
         setUserBalance(parseFloat(result));
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+      message.error("Fetch Failed!");
+    }
   };
 
   useEffect(() => {
-    getUserInfor();
+    if (Object.keys(collateralList).length != 0) {
+      getUserInfor();
+    }
   }, []);
 
-  const [receive, setReceive] = useState<number>(0);
-  const [amount, setAmount] = useState<number>(0);
-
   const handleDeposit = (e: any) => {
-    console.log(e.target.value);
     const amount = e.target.value;
-    const receive = amount * tyGia;
+    const receive = amount * exchangeRate;
     setReceive(receive);
   };
 
-  const handleReceive = (e: any) => {
-    console.log(e.target.value);
-    const receive = e.target.value;
-    const amount = receive / tyGia;
-    form.setFieldsValue({ amount: amount });
-  };
-
-
   return (
-    // <Form form={form} name="validateOnly" layout="vertical" autoComplete="off">
-    //   <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-    //     <Input />
-    //   </Form.Item>
-    //   <Form.Item name="age" label="Age" rules={[{ required: true }]}>
-    //     <Input />
-    //   </Form.Item>
-    //   <Form.Item>
-    //     <Space>
-    //       <SubmitButton form={form} />
-    //       <Button htmlType="reset">Reset</Button>
-    //     </Space>
-    //   </Form.Item>
-    // </Form>
-
-    
-
     <>
-      <form className="px-8 pt-6 pb-8 mb-4">
+      <form className="px-8 pt-6">
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2 text-left">
-            Enter your amount ({vaultInformation?.vaultSymbol})
+          <label className="flex justify-between text-gray-700 text-sm font-bold mb-2 text-left">
+            Enter your amount:
+            <span>
+              Your balance: {userBalance.toLocaleString()}{" "}
+              {vaultInformation?.vaultSymbol}
+            </span>
           </label>
-          <input className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="100" onChange={handleDeposit}/>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
+            placeholder={`${vaultInformation?.vaultSymbol}`}
+            onChange={handleDeposit}
+          />
         </div>
         <div className="flex items-center justify-between">
-          {/* tcUSD can receive */}
           <label className="block text-gray-700 text-sm font-bold mb-2">
-            You will receive: {receive} tcUSD
+            You can borrow: {receive.toLocaleString()} tcUSD
           </label>
-          <button className="button-main" type="button">
+          <button className="button-main" type="submit">
             Deposit
           </button>
         </div>
+
+        {/* Next Button */}
+        <div className="flex justify-end items-center mt-2 gap-2">
+          <span>Already deposited?</span>
+          <button
+            className="button-secondary underline"
+            onClick={() => setCurrent(current + 1)}
+          >
+            Next
+          </button>
+        </div>
       </form>
-    
-      <div className="leading-none space-y-4">
-        <p>
-          Tổng số lượng {vaultInformation?.vaultSymbol} user có thể deposit:{" "}
-          {userBalance}
-        </p>
-        <p>Tỷ giá: {tyGia?.toLocaleString()}</p>
-      </div>
     </>
-  );
-};
-
-const SubmitButton = ({ form }: { form: FormInstance }) => {
-  const [submittable, setSubmittable] = React.useState(false);
-
-  // Watch all values
-  const values = Form.useWatch([], form);
-
-  React.useEffect(() => {
-    form.validateFields({ validateOnly: true }).then(
-      () => {
-        setSubmittable(true);
-      },
-      () => {
-        setSubmittable(false);
-      }
-    );
-  }, [values]);
-
-  return (
-    <Button type="primary" htmlType="submit" disabled={!submittable}>
-      Submit
-    </Button>
   );
 };
 

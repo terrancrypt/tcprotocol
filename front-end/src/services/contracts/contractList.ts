@@ -1,5 +1,6 @@
 import * as EngineABI from "../abis/EngineABI.json";
 import * as MockTokenABI from "../abis/MockTokenABI.json";
+import * as ChainLinkPriceFeedABI from "../abis/ChainLinkPriceFeedABI.json";
 
 interface Contract {
   [chainId: number]: {
@@ -62,4 +63,14 @@ const mockWBTCContract: Contract = {
   },
 };
 
-export { engineContract, mockWETHContract, mockWBTCContract };
+const chainLinkPriceFeed = {
+  ETHUSD: "0x694AA1769357215DE4FAC081bf1f309aDC325306",
+  BTCUSD: "0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43",
+};
+
+export {
+  engineContract,
+  mockWETHContract,
+  mockWBTCContract,
+  chainLinkPriceFeed,
+};

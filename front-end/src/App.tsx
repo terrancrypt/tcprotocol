@@ -43,7 +43,10 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/borrow" element={<BorrowPage />} />
-            <Route path="/borrow/:vaultId" element={<BorrowDetailPage />} />
+            <Route
+              path="/borrow/:chainName/:vaultId"
+              element={<BorrowDetailPage />}
+            />
             <Route path="/faucet" element={<FaucetPage />} />
           </Routes>
         </div>
