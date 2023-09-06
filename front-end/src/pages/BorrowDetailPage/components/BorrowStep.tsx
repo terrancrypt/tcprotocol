@@ -22,10 +22,10 @@ const BorrowStep: React.FC = () => {
   }));
 
   const contentStyle: React.CSSProperties = {
-    lineHeight: "260px",
     textAlign: "center",
     marginTop: 16,
   };
+
   return (
     <>
       <Steps current={current} items={items} />
