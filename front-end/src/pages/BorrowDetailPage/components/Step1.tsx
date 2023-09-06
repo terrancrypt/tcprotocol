@@ -1,11 +1,23 @@
-import { Form, Input, Space, Button, FormInstance } from "antd";
+import { Form, Input, Spin, message } from "antd";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { useAccount, useNetwork } from "wagmi";
+import { waitForTransaction } from "@wagmi/core";
 import { useParams } from "react-router-dom";
-import { fetchTokenBalance } from "../../../services/contracts/interactTokenContract";
-import { getVaultAddress } from "../../../services/contracts/interactEngineContract";
+import {
+  approveEngineContract,
+  fetchTokenBalance,
+} from "../../../services/contracts/interactTokenContract";
+import {
+  depositCollateral,
+  getVaultAddress,
+} from "../../../services/contracts/interactEngineContract";
+import {
+  chainLinkPriceFeed,
+  engineContract,
+} from "../../../services/contracts/contractList";
+import { getLatestAnswer } from "../../../services/contracts/interactPriceFeedContract";
 
 export interface StepProps {
   current: number;
@@ -13,28 +25,31 @@ export interface StepProps {
 }
 
 const Step1: React.FC<StepProps> = ({ current, setCurrent }) => {
-  const [form] = Form.useForm();
+  // Antd
+  const [messageApi, contextHolder] = message.useMessage();
 
+  // React Router
+  const { vaultId, chainName } = useParams();
+
+  // Redux
   const collateralList = useSelector(
     (state: RootState) => state.collateralSlice
   );
-  const { chain } = useNetwork();
-  const { vaultId } = useParams();
-  const { address } = useAccount();
-  const [userBalance, setUserBalance] = useState<number>(0);
 
-  let vaultInformation;
-  let tyGia;
-  if (Object.keys(collateralList).length != 0 && chain) {
-    vaultInformation = collateralList[chain.name].vaults[Number(vaultId)];
-    console.log("Vault Balance: ", parseInt(vaultInformation.balance));
-    console.log(
-      "Vault Value: ",
-      parseFloat(vaultInformation?.valueInUSD.replace(/,/g, ""))
-    );
-    tyGia =
-      parseFloat(vaultInformation?.valueInUSD.replace(/,/g, "")) /
-      parseInt(vaultInformation.balance);
+  // Wagmi
+  const { chain } = useNetwork();
+  const { address } = useAccount();
+
+  // Local Component State
+  const [exchangeRate, setExchangeRate] = useState<number>(0);
+  const [userBalance, setUserBalance] = useState<number>(0);
+  const [receive, setReceive] = useState<number>(0);
+  const [vaultAddress, setVaultAddress] = useState<string>("");
+  const [txLoading, setTxLoading] = useState<boolean>(false);
+
+  let vaultInformation: any;
+  if (vaultId && chainName) {
+    vaultInformation = collateralList[chainName].vaults[Number(vaultId)];
   }
 
   const getUserInfor = async () => {
@@ -49,102 +64,147 @@ const Step1: React.FC<StepProps> = ({ current, setCurrent }) => {
           vaultAddress as string,
           address as any
         );
+        let exchangeRate;
+        if (vaultInformation.vaultSymbol == "WETH") {
+          exchangeRate = await getLatestAnswer(chainLinkPriceFeed.ETHUSD);
+        } else {
+          exchangeRate = await getLatestAnswer(chainLinkPriceFeed.BTCUSD);
+        }
+        setExchangeRate(parseFloat(exchangeRate as string));
         setUserBalance(parseFloat(result));
+        setVaultAddress(vaultAddress ? vaultAddress : "");
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+      message.error("Fetch Failed!");
+    }
   };
 
-  useEffect(() => {
-    getUserInfor();
-  }, []);
-
-  const [receive, setReceive] = useState<number>(0);
-  const [amount, setAmount] = useState<number>(0);
-
-  const handleDeposit = (e: any) => {
-    console.log(e.target.value);
+  const calculate = (e: any) => {
     const amount = e.target.value;
-    const receive = amount * tyGia;
+    const receive = (((amount * exchangeRate) / 2) * 45) / 100;
     setReceive(receive);
   };
 
-  const handleReceive = (e: any) => {
-    console.log(e.target.value);
-    const receive = e.target.value;
-    const amount = receive / tyGia;
-    form.setFieldsValue({ amount: amount });
+  // Form handle
+  const onFinish = async (values: any) => {
+    const amount = Number(values.amount);
+    if (amount > userBalance) message.error("Your balance is not enough!");
+    const { address: spender } = engineContract[vaultInformation.chainId];
+
+    try {
+      setTxLoading(true);
+      messageApi.open({
+        type: "loading",
+        content: "Transaction in progress...",
+        duration: 0,
+      });
+      // Aprrove
+      const hash = await approveEngineContract(
+        vaultInformation.chainId,
+        vaultAddress,
+        address as any,
+        amount,
+        spender
+      );
+      if (hash) {
+        const wait = await waitForTransaction({
+          chainId: vaultInformation.chainId,
+          hash,
+        });
+        if (wait) {
+          message.success("Approve success!");
+          // Deposit
+          const result = await depositCollateral(
+            vaultInformation.chainId,
+            Number(vaultId),
+            amount
+          );
+          if (result) {
+            const waitSecond = await waitForTransaction({
+              chainId: vaultInformation.chainId,
+              hash: result,
+            });
+            if (waitSecond) {
+              message
+                .success("Collateral deposited!")
+                .then(() => messageApi.destroy());
+              setCurrent(current + 1);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      message.error("Transaction failed!");
+    } finally {
+      setTxLoading(false);
+    }
   };
 
+  const onFinishFailed = (errorInfo: any) => {
+    message.error(errorInfo.errorFields[0].errors);
+  };
+
+  useEffect(() => {
+    if (Object.keys(collateralList).length != 0) {
+      getUserInfor();
+    }
+  }, []);
 
   return (
-    // <Form form={form} name="validateOnly" layout="vertical" autoComplete="off">
-    //   <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-    //     <Input />
-    //   </Form.Item>
-    //   <Form.Item name="age" label="Age" rules={[{ required: true }]}>
-    //     <Input />
-    //   </Form.Item>
-    //   <Form.Item>
-    //     <Space>
-    //       <SubmitButton form={form} />
-    //       <Button htmlType="reset">Reset</Button>
-    //     </Space>
-    //   </Form.Item>
-    // </Form>
-
-    
-
     <>
-      <form className="px-8 pt-6 pb-8 mb-4">
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2 text-left">
-            Enter your amount ({vaultInformation?.vaultSymbol})
-          </label>
-          <input className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="100" onChange={handleDeposit}/>
+      {contextHolder}
+      <Spin spinning={txLoading}>
+        <div className="flex items-center justify-center w-full">
+          <Form
+            onFinish={onFinish}
+            onFinishFailed={onFinishFailed}
+            style={{ width: 500, marginTop: 20 }}
+          >
+            <label className="flex justify-between text-gray-700 text-sm font-bold mb-2 text-left">
+              Enter your amount:
+              <span>
+                Your balance: {userBalance.toLocaleString()}{" "}
+                {vaultInformation?.vaultSymbol}
+              </span>
+            </label>
+            <Form.Item
+              noStyle
+              name="amount"
+              rules={[{ required: true, message: "Invalid balance!" }]}
+            >
+              <Input
+                className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
+                placeholder={`${vaultInformation?.vaultSymbol}`}
+                onChange={calculate}
+              />
+            </Form.Item>
+
+            <Form.Item>
+              <div className="flex items-center justify-between mt-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2">
+                  You can borrow: {receive.toLocaleString()} tcUSD
+                </label>
+                <button className="button-main" type="submit">
+                  Deposit
+                </button>
+              </div>
+            </Form.Item>
+          </Form>
         </div>
-        <div className="flex items-center justify-between">
-          {/* tcUSD can receive */}
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            You will receive: {receive} tcUSD
-          </label>
-          <button className="button-main" type="button">
-            Deposit
+
+        {/* Next Button */}
+        <div className="flex justify-center items-center mt-2 gap-2 pr-8">
+          <span>Already deposited?</span>
+          <button
+            className="button-secondary underline"
+            onClick={() => setCurrent(current + 1)}
+          >
+            Next
           </button>
         </div>
-      </form>
-    
-      <div className="leading-none space-y-4">
-        <p>
-          Tổng số lượng {vaultInformation?.vaultSymbol} user có thể deposit:{" "}
-          {userBalance}
-        </p>
-        <p>Tỷ giá: {tyGia?.toLocaleString()}</p>
-      </div>
+      </Spin>
     </>
-  );
-};
-
-const SubmitButton = ({ form }: { form: FormInstance }) => {
-  const [submittable, setSubmittable] = React.useState(false);
-
-  // Watch all values
-  const values = Form.useWatch([], form);
-
-  React.useEffect(() => {
-    form.validateFields({ validateOnly: true }).then(
-      () => {
-        setSubmittable(true);
-      },
-      () => {
-        setSubmittable(false);
-      }
-    );
-  }, [values]);
-
-  return (
-    <Button type="primary" htmlType="submit" disabled={!submittable}>
-      Submit
-    </Button>
   );
 };
 

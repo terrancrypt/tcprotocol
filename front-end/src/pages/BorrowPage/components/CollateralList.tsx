@@ -79,7 +79,7 @@ const CollateralList: React.FC = () => {
                       <td className="px-6 py-4">{vault.valueInUSD}</td>
 
                       <td className=" py-4">
-                        <NavLink to={`/borrow/${vault.vaultId}`}>
+                        <NavLink to={`/borrow/${chainName}/${vault.vaultId}`}>
                           <button className="button-main">Borrow</button>
                         </NavLink>
                       </td>
