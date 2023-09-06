@@ -63,27 +63,24 @@ const CollateralList: React.FC = () => {
                       Total Value In USD
                     </th>
                     <th scope="col" className="px-6 py-3">
-                      Your balance
-                    </th>
-                    <th scope="col" className="px-6 py-3">
                       {" "}
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {data.vaults.map((vault) => (
-                    <tr className="bg-white border-b">
+                  {data.vaults.map((vault: any, index: number) => (
+                    <tr className="bg-white border-b" key={index}>
                       <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                         {vault.vaultSymbol}/tcUSD
                       </th>
                       <td className="px-6 py-4">
                         {parseFloat(vault.balance).toFixed(3)}
                       </td>
-                      <td className="px-6 py-4">...</td>
-                      <td className="px-6 py-4">...</td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4">{vault.valueInUSD}</td>
+
+                      <td className=" py-4">
                         <NavLink to={`/borrow/${vault.vaultId}`}>
-                          <button className="button-main">borrow</button>
+                          <button className="button-main">Borrow</button>
                         </NavLink>
                       </td>
                     </tr>

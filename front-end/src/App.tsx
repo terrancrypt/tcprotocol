@@ -14,7 +14,7 @@ import { message } from "antd";
 import { addCollateralList } from "./redux/slices/collateralSlice";
 import FaucetPage from "./pages/FaucetPage/FaucetPage";
 import DashboardPage from "./pages/Dashboard/DashboardPage";
-import BorowPageDetail from "./pages/BorrowPage/BorowPageDetail";
+import BorrowDetailPage from "./pages/BorrowDetailPage/BorowDetailPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -43,7 +43,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/borrow" element={<BorrowPage />} />
-            <Route path="/borrow/:vaultId" element={<BorowPageDetail />} />
+            <Route path="/borrow/:vaultId" element={<BorrowDetailPage />} />
             <Route path="/faucet" element={<FaucetPage />} />
           </Routes>
         </div>
