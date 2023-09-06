@@ -39,7 +39,7 @@
 
 /* Antd Steps */
 .ant-steps .ant-steps-item-title {
-  color: white !important;
+  color: black !important;
 }
 
 .ant-steps .ant-steps-item-process .ant-steps-item-icon {
@@ -56,7 +56,7 @@
 }
 
 .ant-steps .ant-steps-item-process .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title::after {
-  background-color: white !important;
+  background-color: black !important;
 }
 
 .ant-steps .ant-steps-item-wait .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title::after {
