@@ -27,7 +27,7 @@ const BorrowDetailPage: React.FC = () => {
             <div>You need to connect wallet to see this page!</div>
           ) : (
             <div className="flex justify-between text-white gap-4">
-              <div className="bg-white text-[#0f1841] p-4 rounded-lg space-y-4 flex-[0.3]">
+              <div className="bg-white text-[#0f1841] p-4 rounded-lg space-y-4 flex-[0.3] shadow-md">
                 <h1 className="text-2xl font-bold">
                   {vaultInformation?.vaultSymbol} Vault
                 </h1>
@@ -37,7 +37,7 @@ const BorrowDetailPage: React.FC = () => {
                 </p>
                 <p>Total Value: ${vaultInformation?.valueInUSD}</p>
               </div>
-              <div className="flex-1 p-4 border">
+              <div className="flex-1 p-4 bg-white text-black rounded-lg shadow-md">
                 <BorrowStep />
               </div>
             </div>
