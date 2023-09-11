@@ -7,7 +7,7 @@ import {
   CollateralInfo,
   getAllCollateralList,
 } from "./services/collateralRenderServices";
-import { sepolia } from "wagmi";
+import { sepolia, useConnect } from "wagmi";
 import { optimismGoerli, polygonMumbai } from "wagmi/chains";
 import { useDispatch } from "react-redux";
 import { message } from "antd";
@@ -15,9 +15,13 @@ import { addCollateralList } from "./redux/slices/collateralSlice";
 import FaucetPage from "./pages/FaucetPage/FaucetPage";
 import DashboardPage from "./pages/Dashboard/DashboardPage";
 import BorrowDetailPage from "./pages/BorrowDetailPage/BorowDetailPage";
+import { InjectedConnector } from "wagmi/connectors/injected";
 
 function App() {
   const dispatch = useDispatch();
+  const { connect } = useConnect({
+    connector: new InjectedConnector(),
+  });
 
   const fetchCollateralList = async () => {
     try {
@@ -32,6 +36,7 @@ function App() {
 
   useEffect(() => {
     fetchCollateralList();
+    connect();
   }, []);
 
   return (
