@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { StepProps } from "./Step1";
-import { Form, Input, InputNumber, Spin, message } from "antd";
+import { Form, Input, Spin, message } from "antd";
 import { useSelector } from "react-redux";
 import { useAccount, useNetwork } from "wagmi";
 import { waitForTransaction } from "@wagmi/core";
 import { RootState } from "../../../redux/store";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  chainLinkPriceFeed,
-  engineContract,
-} from "../../../services/contracts/contractList";
+import { chainLinkPriceFeed } from "../../../services/contracts/contractList";
 import { getLatestAnswer } from "../../../services/contracts/interactPriceFeedContract";
 import {
   createPosition,
   getUserBalanceInVault,
-  getVaultAddress,
 } from "../../../services/contracts/interactEngineContract";
 
 const Step2: React.FC<StepProps> = ({ current, setCurrent }) => {

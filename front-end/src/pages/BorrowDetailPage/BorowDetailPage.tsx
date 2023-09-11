@@ -31,12 +31,23 @@ const BorrowDetailPage: React.FC = () => {
                 <h1 className="text-2xl font-bold">
                   {vaultInformation?.vaultSymbol} Vault
                 </h1>
-                <p>Network: {chainName}</p>
+                <p>
+                  Network: <span className="font-medium"> {chainName}</span>
+                </p>
                 <p>
                   Total Deposited:{" "}
-                  {parseFloat(vaultInformation?.balance as string).toFixed(2)}
+                  <span className="font-medium">
+                    {parseFloat(vaultInformation?.balance as string).toFixed(2)}{" "}
+                    {vaultInformation?.vaultSymbol}
+                  </span>
                 </p>
-                <p>Total Value: ${vaultInformation?.valueInUSD}</p>
+                <p>
+                  Total Value:
+                  <span className="font-medium">
+                    {" "}
+                    ${vaultInformation?.valueInUSD}
+                  </span>
+                </p>
               </div>
               <div className="flex-1 p-4 bg-white text-black rounded-lg shadow-md">
                 {chain.name == chainName ? (

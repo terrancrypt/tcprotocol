@@ -1,7 +1,7 @@
 import { readContract, writeContract } from "@wagmi/core";
 import { engineContract } from "./contractList";
 import EngineABI from "../abis/EngineABI.json";
-import { formatEther, parseEther } from "ethers";
+import { formatEther, formatUnits, parseEther } from "ethers";
 
 // read
 async function getCurrentVaultId(chainId: number): Promise<number | null> {
@@ -98,6 +98,52 @@ async function getUserBalanceInVault(
   }
 }
 
+export interface Position {
+  chainId: number;
+  amountCollateral: string;
+  amountTCUSD: string;
+  heathFactor: string;
+}
+
+async function getAllPositionsInformation(allChainId: number[], owner: string) {
+  try {
+    const allPositionInfo: Position[] = [];
+
+    for (const chainId of allChainId) {
+      const address = engineContract[chainId].address;
+      const positionsId = (await readContract({
+        address: address as any,
+        abi: EngineABI as typeof EngineABI,
+        functionName: "getAllPositionExists",
+        args: [owner],
+        chainId,
+      })) as number[];
+
+      for (const positionId of positionsId) {
+        const result = (await readContract({
+          address: address as any,
+          abi: EngineABI as typeof EngineABI,
+          functionName: "getUniquePosition",
+          args: [positionId],
+          chainId,
+        })) as any;
+
+        allPositionInfo.push({
+          chainId,
+          amountCollateral: formatEther(result[2]),
+          amountTCUSD: formatEther(result[3]),
+          heathFactor: formatEther(result[4]),
+        });
+      }
+    }
+
+    return allPositionInfo;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
 // write
 async function depositCollateral(
   chainId: number,
@@ -156,4 +202,5 @@ export {
   depositCollateral,
   getUserBalanceInVault,
   createPosition,
+  getAllPositionsInformation,
 };
