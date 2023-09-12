@@ -1,7 +1,8 @@
 import { readContract, writeContract } from "@wagmi/core";
 import { engineContract } from "./contractList";
 import EngineABI from "../abis/EngineABI.json";
-import { formatEther, formatUnits, parseEther } from "ethers";
+import { formatEther, parseEther } from "ethers";
+import { getTokenSymbol } from "./interactTokenContract";
 
 // read
 async function getCurrentVaultId(chainId: number): Promise<number | null> {
@@ -100,9 +101,11 @@ async function getUserBalanceInVault(
 
 export interface Position {
   chainId: number;
+  positionId: number;
   amountCollateral: string;
   amountTCUSD: string;
   heathFactor: string;
+  collateralSymbol: string;
 }
 
 async function getAllPositionsInformation(allChainId: number[], owner: string) {
@@ -128,11 +131,16 @@ async function getAllPositionsInformation(allChainId: number[], owner: string) {
           chainId,
         })) as any;
 
+        const vaultAddress = await getVaultAddress(chainId, result[0]);
+        const symbol = await getTokenSymbol(chainId, vaultAddress as string);
+
         allPositionInfo.push({
           chainId,
+          positionId: positionId,
           amountCollateral: formatEther(result[2]),
           amountTCUSD: formatEther(result[3]),
           heathFactor: formatEther(result[4]),
+          collateralSymbol: symbol ? symbol : "",
         });
       }
     }
@@ -187,12 +195,31 @@ async function createPosition(
     });
     return hash;
   } catch (error) {
-    console.log(error);
     return null;
   }
 }
 
-async function cancelPosition() {}
+async function cancelPosition(
+  chainId: number,
+  positionId: number,
+  userAccount: string
+) {
+  const address = engineContract[chainId].address;
+  try {
+    const { hash } = await writeContract({
+      address: address as any,
+      abi: EngineABI,
+      functionName: "cancelPosition",
+      args: [positionId],
+      chainId,
+      account: userAccount as any,
+    });
+    return hash;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
 
 export {
   getCurrentVaultId,
@@ -203,4 +230,5 @@ export {
   getUserBalanceInVault,
   createPosition,
   getAllPositionsInformation,
+  cancelPosition,
 };
