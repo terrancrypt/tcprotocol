@@ -8,7 +8,7 @@ import {
   fetchTokenBalance,
   writeFaucet,
 } from "../../../services/contracts/interactTokenContract";
-import { useAccount, useWaitForTransaction } from "wagmi";
+import { useAccount } from "wagmi";
 import { waitForTransaction } from "@wagmi/core";
 
 interface FaucetTokenListProps {

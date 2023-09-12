@@ -2,7 +2,6 @@ import { Tooltip } from "antd";
 import React from "react";
 import { useAccount, useConnect, useDisconnect, useEnsName } from "wagmi";
 import { InjectedConnector } from "wagmi/connectors/injected";
-import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 
 const Connect: React.FC = () => {
   const { address, isConnected } = useAccount();

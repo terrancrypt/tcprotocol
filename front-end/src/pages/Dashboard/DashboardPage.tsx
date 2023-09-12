@@ -3,7 +3,7 @@ import {
   Position,
   getAllPositionsInformation,
 } from "../../services/contracts/interactEngineContract";
-import { sepolia, useAccount, useConnect, useNetwork } from "wagmi";
+import { sepolia, useAccount, useNetwork } from "wagmi";
 import { optimismGoerli, polygonMumbai } from "wagmi/chains";
 import Positions from "./components/Positions";
 import { Spin, message } from "antd";

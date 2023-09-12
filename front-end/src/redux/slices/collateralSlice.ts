@@ -9,6 +9,7 @@ export const collateralSlice = createSlice({
   initialState,
   reducers: {
     addCollateralList: (state, action: PayloadAction<CollateralInfo>) => {
+      console.log(state);
       return action.payload;
     },
   },

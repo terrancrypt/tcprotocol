@@ -1,4 +1,5 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 
 const HomePage: React.FC = () => {
   return (
@@ -19,9 +20,11 @@ const HomePage: React.FC = () => {
           to create a place for you to borrow stablecoins with no interest, no
           fees, no time wasted!
         </p>
-        <button className="bg-[#0f1841] text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-brown-600 hover:bg-blue-900 transition-all duration-300">
-          Get Started
-        </button>
+        <NavLink to={"/borrow"}>
+          <button className="bg-[#0f1841] text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-brown-600 hover:bg-blue-900 transition-all duration-300">
+            Get Started
+          </button>
+        </NavLink>
       </div>
     </div>
   );
