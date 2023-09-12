@@ -1,6 +1,6 @@
 # tcprotocol
 
-Winnning Project In Defi Track Of [Ref Finnane](https://www.ref.finance/) At [Web3 Hackfest 2023](https://devfolio.co/projects/tc-protocol-e5f8).
+Winnning Project In Defi Track Of [Ref Finance](https://www.ref.finance/) At [Web3 Hackfest 2023](https://devfolio.co/projects/tc-protocol-e5f8).
 The project's interface has been upgraded, all functions of the smart contract remain the same as when submitting the project to the hackathon.
 
 Old interface: [https://web3hackfest.vercel.app](https://tcprotocol.vercel.app/).
