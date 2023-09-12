@@ -85,6 +85,7 @@ const Positions: React.FC<PositionsProps> = ({ positionsInfo, onCallback }) => {
       message.error("Transaction failed!");
     } finally {
       setTxLoading(false);
+      messageApi.destroy();
     }
   };
 
@@ -94,7 +95,7 @@ const Positions: React.FC<PositionsProps> = ({ positionsInfo, onCallback }) => {
         {contextHolder}
         <Spin spinning={txLoading}>
           <table className="w-full text-sm text-left whitespace-nowrap">
-            <thead className=" text-gray-700  bg-gray-50 ">
+            <thead className=" text-gray-700 bg-gray-50 ">
               <tr>
                 <th scope="col" className="px-6 py-3">
                   Chain
