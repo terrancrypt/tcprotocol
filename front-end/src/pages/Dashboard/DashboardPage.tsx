@@ -3,7 +3,7 @@ import {
   Position,
   getAllPositionsInformation,
 } from "../../services/contracts/interactEngineContract";
-import { sepolia, useAccount } from "wagmi";
+import { sepolia, useAccount, useNetwork } from "wagmi";
 import { optimismGoerli, polygonMumbai } from "wagmi/chains";
 import Positions from "./components/Positions";
 import { Spin, message } from "antd";
@@ -12,9 +12,11 @@ const DashboardPage: React.FC = () => {
   // Local State
   const [positions, setPostions] = useState<Position[]>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [callback, setCallback] = useState<boolean>(false);
 
   // Wagmi
   const { address } = useAccount();
+  const { chain } = useNetwork();
 
   // Chains
   const chains = [sepolia.id, polygonMumbai.id, optimismGoerli.id];
@@ -35,9 +37,14 @@ const DashboardPage: React.FC = () => {
     }
   };
 
+  // Callback
+  const handleCallback = () => {
+    setCallback(!callback);
+  };
+
   useEffect(() => {
     fetchPostions();
-  }, []);
+  }, [chain, callback]);
 
   return (
     <>
@@ -47,7 +54,7 @@ const DashboardPage: React.FC = () => {
           {isLoading ? (
             <Spin size="large" />
           ) : (
-            <Positions positionsInfo={positions} />
+            <Positions positionsInfo={positions} onCallback={handleCallback} />
           )}
         </div>
       </div>
