@@ -27,7 +27,7 @@ const Header: React.FC = () => {
               Faucet
             </NavLink>
             <a
-              href="https://terrancrypt.gitbook.io/tcprotocol/"
+              href="https://github.com/terrancrypt/web3hackfest#tc-protocol"
               target="_blank"
               className="hover:underline transition-all"
             >
