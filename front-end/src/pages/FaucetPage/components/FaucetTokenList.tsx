@@ -92,9 +92,9 @@ const FaucetTokenList: React.FC<FaucetTokenListProps> = ({ chainId }) => {
   };
 
   return (
-    <div className="shadow-md flex-1 bg-white/60 rounded-lg">
+    <div className="shadow-md flex-1 bg-white rounded-lg">
       <table className="min-w-full divide-y divide-gray-200 text-center">
-        <thead className="bg-white/70">
+        <thead className="bg-gray-50">
           <tr>
             <th
               scope="col"

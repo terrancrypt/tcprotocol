@@ -3,10 +3,11 @@ import {
   Position,
   getAllPositionsInformation,
 } from "../../services/contracts/interactEngineContract";
-import { sepolia, useAccount, useNetwork } from "wagmi";
+import { sepolia, useAccount, useConnect, useNetwork } from "wagmi";
 import { optimismGoerli, polygonMumbai } from "wagmi/chains";
 import Positions from "./components/Positions";
 import { Spin, message } from "antd";
+import AllCollateralDeposited from "./components/AllCollateralDeposited";
 
 const DashboardPage: React.FC = () => {
   // Local State
@@ -51,10 +52,32 @@ const DashboardPage: React.FC = () => {
       <div className="justify-center container mx-auto">
         <div className="text-center mb-12 px-20">
           <h1 className="text-gray-200 text-5xl font-bold mb-16">DASHBOARD</h1>
-          {isLoading ? (
-            <Spin size="large" />
+          {chain ? (
+            <div className="flex justify-between gap-2 items-start">
+              <div className=" flex-[0.5]">
+                <h2 className="text-gray-200 text-xl font-bold mb-4 uppercase">
+                  Your Collateral Deposited In Protocol
+                </h2>
+                <AllCollateralDeposited />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-gray-200 text-xl font-bold mb-4 uppercase">
+                  Your Active Positions
+                </h2>
+                {isLoading ? (
+                  <Spin size="large" />
+                ) : (
+                  <Positions
+                    positionsInfo={positions}
+                    onCallback={handleCallback}
+                  />
+                )}
+              </div>
+            </div>
           ) : (
-            <Positions positionsInfo={positions} onCallback={handleCallback} />
+            <p className="text-white">
+              "You need to connect your wallet to see this page!"
+            </p>
           )}
         </div>
       </div>

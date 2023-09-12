@@ -22,43 +22,45 @@ const BorrowDetailPage: React.FC = () => {
       {Object.keys(collateralList).length === 0 ? (
         <Spin />
       ) : (
-        <>
-          {chain == null ? (
-            <div>You need to connect wallet to see this page!</div>
-          ) : (
-            <div className="flex justify-between text-white gap-4">
-              <div className="bg-white text-[#0f1841] p-4 rounded-lg space-y-4 flex-[0.3] shadow-md">
-                <h1 className="text-2xl font-bold">
-                  {vaultInformation?.vaultSymbol} Vault
-                </h1>
-                <p>
-                  Network: <span className="font-medium"> {chainName}</span>
-                </p>
-                <p>
-                  Total Deposited:{" "}
-                  <span className="font-medium">
-                    {parseFloat(vaultInformation?.balance as string).toFixed(2)}{" "}
-                    {vaultInformation?.vaultSymbol}
-                  </span>
-                </p>
-                <p>
-                  Total Value:
-                  <span className="font-medium">
-                    {" "}
-                    ${vaultInformation?.valueInUSD}
-                  </span>
-                </p>
-              </div>
-              <div className="flex-1 p-4 bg-white text-black rounded-lg shadow-md">
+        <div className="flex justify-between text-white gap-4">
+          <div className="bg-white text-[#0f1841] p-4 rounded-lg space-y-4 flex-[0.3] shadow-md">
+            <h1 className="text-2xl font-bold">
+              {vaultInformation?.vaultSymbol} Vault
+            </h1>
+            <p>
+              Network: <span className="font-medium"> {chainName}</span>
+            </p>
+            <p>
+              Total Deposited:{" "}
+              <span className="font-medium">
+                {parseFloat(vaultInformation?.balance as string).toFixed(2)}{" "}
+                {vaultInformation?.vaultSymbol}
+              </span>
+            </p>
+            <p>
+              Total Value:
+              <span className="font-medium">
+                {" "}
+                ${vaultInformation?.valueInUSD}
+              </span>
+            </p>
+          </div>
+          <div className="flex-1 p-4 bg-white text-black rounded-lg shadow-md">
+            {chain ? (
+              <>
                 {chain.name == chainName ? (
                   <BorrowStep />
                 ) : (
                   <p>You need to change the network.</p>
                 )}
-              </div>
-            </div>
-          )}
-        </>
+              </>
+            ) : (
+              <>
+                <p>"You need to connect your wallet to see this page!"</p>
+              </>
+            )}
+          </div>
+        </div>
       )}
     </>
   );

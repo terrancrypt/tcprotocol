@@ -92,6 +92,7 @@ async function getUserBalanceInVault(
       functionName: "getCollateralDeposited",
       args: [vaultId],
       account: userAddress as any,
+      chainId,
     });
     return formatEther(result);
   } catch (error) {
@@ -221,6 +222,25 @@ async function cancelPosition(
   }
 }
 
+async function withdrawCollateral(
+  chainId: number,
+  vaultId: number,
+  amountToRedeem: number
+) {
+  const address = engineContract[chainId].address;
+  try {
+    const { hash } = await writeContract({
+      address: address as any,
+      abi: EngineABI,
+      functionName: "withdrawCollateral",
+      args: [vaultId, parseEther(String(amountToRedeem))],
+    });
+    return hash;
+  } catch (error) {
+    return null;
+  }
+}
+
 export {
   getCurrentVaultId,
   getVaultAddress,
@@ -231,4 +251,5 @@ export {
   createPosition,
   getAllPositionsInformation,
   cancelPosition,
+  withdrawCollateral,
 };

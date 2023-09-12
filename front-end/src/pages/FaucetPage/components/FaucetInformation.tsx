@@ -48,7 +48,7 @@ const FaucetInformation: React.FC<FaucetInforProps> = ({ chainName }) => {
   };
 
   return (
-    <div className="px-6 py-4 shadow-md flex-1 bg-white/70 rounded-lg">
+    <div className="px-6 py-4 shadow-md flex-1 bg-white rounded-lg">
       <div className="flex items-center justify-between text-gray-700">
         <div className="text-lg font-bold">Information</div>
         <div className="flex items-center space-x-2">
