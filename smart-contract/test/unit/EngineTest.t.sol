@@ -250,6 +250,7 @@ contract EngineTest is Test {
             WETH_VAULT_ID
         );
         uint256 amountTcUSDCanBorrow = engine.getAmountCanBorrow(WETH_VAULT_ID);
+        console.log(amountTcUSDCanBorrow);
         engine.createPosition(
             WETH_VAULT_ID,
             WETH_FAUCET_AMOUNT,
